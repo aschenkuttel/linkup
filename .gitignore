@@ -2,3 +2,5 @@
 .idea/
 config.json
 config.db
+config.db-journal
+linkup.log

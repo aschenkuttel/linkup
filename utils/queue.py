@@ -1,9 +1,10 @@
 import collections
-import asyncio
+from utils.session import Session
 
 
 class Queue:
-    def __init__(self, config):
+    def __init__(self, bot, config):
+        self.bot = bot
         self.config = config
 
         # user currently in queue
@@ -18,37 +19,56 @@ class Queue:
             for game in self.config['supported_games']:
                 regional_container[game] = collections.deque()
 
-    async def run(self):
+    async def gather_sessions(self):
         for region in self.config['supported_regions']:
             for game in self.config['supported_games']:
                 iterable = self._queues[region][game]
                 if len(iterable) >= 2:
-                    pass
+                    first_user = iterable.popleft()
+                    second_user = iterable.popleft()
 
-        await asyncio.sleep(5)
+                    session = Session(self.bot, first_user, second_user, region, game)
+                    yield session
+                    break
 
     def in_queue(self, user_id):
-        return bool(self.user_cache.get(user_id))
+        return self.user_cache.get(user_id) is not None
 
     def add(self, region, game, user):
         iterable = self._queues[region][game]
 
         if self.in_queue(user.id):
-            if user in iterable:
-                return self.remove
-            else:
-                return False
-        else:
-            iterable.append(user)
-            self.user_cache[user.id] = True
-            return True
+            in_same_game_queue = user in iterable
+            self._remove(region, game, user)
 
-    def remove(self, region, game, user):
-        if not self.in_queue(user.id):
-            return False
-        else:
-            try:
-                self._queues[region][game].remove(user)
-                return True
-            except ValueError:
+            # if user is already in that queue we only delete
+            if in_same_game_queue:
                 return False
+
+        iterable.append(user)
+        self.user_cache[user.id] = True
+        return True
+
+    def _remove(self, region, game, user):
+        try:
+            self._queues[region][game].remove(user)
+            self.user_cache.pop(user.id)
+            return True
+        except ValueError:
+            return False
+
+    def remove_user(self, user):
+        queue_data = self.user_cache.get(user.id)
+
+        if queue_data is None:
+            return False
+
+        region, game = queue_data
+        return self._remove(region, game, user)
+
+    def vip(self, region, game, user):
+        iterable = self._queues[region][game]
+
+        iterable.append(user)
+        self.user_cache[user.id] = True
+        return True

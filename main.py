@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from glob import glob
+import logging
 from utils import Queue
 
 
@@ -12,20 +13,25 @@ class LinkUp(commands.Bot):
         custom_intents = discord.Intents.default()
         super().__init__(intents=custom_intents, command_prefix="#")
         self.config = json.load(open("config.json"))
-        self.queue = Queue(self.config)
-        print(self.queue)
+        self.queue = Queue(self, self.config)
         self.db = None
+
+        self.logger = logging.getLogger("LinkUp")
+        self.logger.setLevel(logging.DEBUG)
+        handler = logging.FileHandler(filename=f"linkup.log", encoding='utf-8', mode='w')
+        handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+        self.logger.addHandler(handler)
 
     async def setup_hook(self):
         self.db = await aiosqlite.connect('config.db')
         await self.execute('CREATE TABLE IF NOT EXISTS user_config (id BIGINT PRIMARY KEY, region TEXT)')
+        await self.execute('CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                           'first_user_id BIGINT, second_user_id BIGINT, region TEXT, game TEXT)')
         await self.setup_cogs()
 
         guild_id = discord.Object(id=918204250893475900)
         self.tree.copy_global_to(guild=guild_id)
         await self.tree.sync(guild=guild_id)
-
-        self.loop.create_task(self.queue.run())
         print("LinkUp connected")
 
     async def execute(self, query, *args):
