@@ -65,4 +65,4 @@ We managed to get our proof of concept out there, live for people to test and co
 
 
 ## What's next for LinkUp
-For now it is a more casual experience where you can simply look for new people to play with. For more serious gamer who are looking for skillful teammates we will implement a way to also enter your skill level and describe more precisely what you are looking for. That way E-sport groups could even recruit people and sent a hiring message for potential new players. 
+For now it is a more casual experience where you can simply look for new people to play with. For more serious gamers who are looking for skillful teammates we will implement a way to also enter your skill level and describe more precisely what you are looking for. That way E-sport groups could even recruit people and send a hiring message to potential new players. 
