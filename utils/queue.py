@@ -24,8 +24,14 @@ class Queue:
             for game in self.config['supported_games']:
                 iterable = self._queues[region][game]
                 if len(iterable) >= 2:
-                    first_user = iterable.popleft()
-                    second_user = iterable.popleft()
+                    first_user_id = iterable.popleft()
+                    second_user_id = iterable.popleft()
+
+                    first_user = self.user_cache.get(first_user_id)
+                    second_user = self.user_cache.get(second_user_id)
+
+                    if None in (first_user, second_user):
+                        continue
 
                     session = Session(self.bot, first_user, second_user, region, game)
                     yield session
@@ -38,20 +44,20 @@ class Queue:
         iterable = self._queues[region][game]
 
         if self.in_queue(user.id):
-            in_same_game_queue = user in iterable
+            in_same_game_queue = user.id in iterable
             self._remove(region, game, user)
 
             # if user is already in that queue we only delete
             if in_same_game_queue:
                 return False
 
-        iterable.append(user)
-        self.user_cache[user.id] = True
+        iterable.append(user.id)
+        self.user_cache[user.id] = (region, game, user)
         return True
 
     def _remove(self, region, game, user):
         try:
-            self._queues[region][game].remove(user)
+            self._queues[region][game].remove(user.id)
             self.user_cache.pop(user.id)
             return True
         except ValueError:
@@ -69,6 +75,6 @@ class Queue:
     def vip(self, region, game, user):
         iterable = self._queues[region][game]
 
-        iterable.append(user)
-        self.user_cache[user.id] = True
+        iterable.append(user.id)
+        self.user_cache[user.id] = (region, game, user)
         return True

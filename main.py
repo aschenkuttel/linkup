@@ -28,10 +28,6 @@ class LinkUp(commands.Bot):
         await self.execute('CREATE TABLE IF NOT EXISTS session (id INTEGER PRIMARY KEY AUTOINCREMENT,'
                            'first_user_id BIGINT, second_user_id BIGINT, region TEXT, game TEXT)')
         await self.setup_cogs()
-
-        guild_id = discord.Object(id=918204250893475900)
-        self.tree.copy_global_to(guild=guild_id)
-        await self.tree.sync(guild=guild_id)
         print("LinkUp connected")
 
     async def execute(self, query, *args):

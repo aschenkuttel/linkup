@@ -42,3 +42,12 @@ class Session:
         cursor = await self.bot.db.execute(query, [20, 20, self.region, self.game])
         self.id = cursor.lastrowid
         return True
+
+    async def end(self, user):
+        try:
+            partner = self.get_partner(user.id)
+            end = f"{user.name} closed the session or was unreachable."
+            embed = discord.Embed(title=f"User: {self.first_user.name} - {self.second_user.name}", description=end)
+            await partner.send(embed=embed)
+        except Exception as error:
+            self.bot.logger.error(error)
