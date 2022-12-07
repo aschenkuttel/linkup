@@ -1,1 +1,5 @@
-![alt text](https://github.com/aschenkuttel/linkup/blob/master/icon.png?raw=true)
+<p align="center">
+   <img src="https://i.ibb.co/jbqnNbk/icon-small.png" alt=""/>
+</p>
+
+# LinkUp
