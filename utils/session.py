@@ -17,7 +17,7 @@ class Session:
         welcome = "Welcome to your gaming session. Simply write in this chat and any message besides" \
                   "commands will be relayed to your session partner. Be kind!"
         embed = discord.Embed(title=f"User: {self.first_user.name} - {self.second_user.name}", description=welcome)
-        footer = "Quit your session with /quit"
+        footer = "End your session with /end"
         embed.set_footer(text=footer)
         return embed
 

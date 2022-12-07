@@ -27,11 +27,14 @@ class Queue:
                     first_user_id = iterable.popleft()
                     second_user_id = iterable.popleft()
 
-                    first_user = self.user_cache.get(first_user_id)
-                    second_user = self.user_cache.get(second_user_id)
+                    first_user_data = self.user_cache.get(first_user_id)
+                    second_user_data = self.user_cache.get(second_user_id)
 
-                    if None in (first_user, second_user):
+                    if None in (first_user_data, second_user_data):
                         continue
+
+                    first_user = first_user_data[-1]
+                    second_user = second_user_data[-1]
 
                     session = Session(self.bot, first_user, second_user, region, game)
                     yield session

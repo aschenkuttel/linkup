@@ -9,9 +9,9 @@ class Config(commands.Cog):
         self.bot = bot
         self.config = bot.config
 
-    set_group = app_commands.Group(name="set", description="xd")
+    set_group = app_commands.Group(name="set", description="config")
 
-    @set_group.command(name="region")
+    @set_group.command(name="region", description="Sets your global region")
     async def set_region(self, interaction: discord.Interaction, region: Region):
         if region is None:
             await interaction.response.send_message("Invalid Region")

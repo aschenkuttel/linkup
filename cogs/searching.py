@@ -112,7 +112,7 @@ class Searching(commands.Cog):
         session = self.user_sessions.get(interaction.user.id)
 
         if session is not None:
-            await self.end_session(session, interaction.user.id)
+            await self.end_session(session, interaction.user)
             await interaction.response.send_message("session successfully ended")
         else:
             await interaction.response.send_message("you're currently not in an active session")
